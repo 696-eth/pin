@@ -16,7 +16,7 @@ if (!projectId) {
 const metadata = {
   name: '$PIN',
   description: 'Get your memes, ads or projects seen by thousands.',
-  url: 'https://pin-project-sigma.vercel.app',
+  url: 'https://pinmytweet.xyz',
   icons: []
 }
 
@@ -25,10 +25,7 @@ export const modal = createAppKit({
   projectId,
   networks: [base],
   defaultNetwork: base,
-  metadata: metadata,
-  features: {
-    analytics: true
-  }
+  metadata: metadata
 })
 
 function ContextProvider({
