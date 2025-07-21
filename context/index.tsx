@@ -16,7 +16,7 @@ if (!projectId) {
 const metadata = {
   name: '$PIN',
   description: 'Get your memes, ads or projects seen by thousands.',
-  url: 'http://localhost:3000',
+  url: 'https://pin-project-sigma.vercel.app',
   icons: []
 }
 
