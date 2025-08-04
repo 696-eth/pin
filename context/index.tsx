@@ -25,7 +25,8 @@ export const modal = createAppKit({
   projectId,
   networks: [base],
   defaultNetwork: base,
-  metadata: metadata
+  metadata: metadata,
+  themeMode: 'dark'
 })
 
 function ContextProvider({

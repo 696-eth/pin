@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
+
 import { Geist, Geist_Mono } from 'next/font/google'
 import { headers } from 'next/headers'
 import ContextProvider from '@/context'
+import Header from '@/components/header'
+import Footer from '@/components/footer'
 import './globals.css'
 
 const geistSans = Geist({
@@ -28,11 +31,17 @@ export default async function RootLayout({
   const cookies = headersObj.get('cookie')
 
   return (
-    <html lang='en'>
+    <html lang='en' data-theme='dark'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen`}
       >
-        <ContextProvider cookies={cookies}>{children}</ContextProvider>
+        <ContextProvider cookies={cookies}>
+          <div className='grid grid-rows-[auto_1fr_auto] h-screen'>
+            <Header />
+            <main className='p-8 pb-20 gap-16 sm:p-20'>{children}</main>
+            <Footer />
+          </div>
+        </ContextProvider>
       </body>
     </html>
   )

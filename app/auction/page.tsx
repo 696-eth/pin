@@ -1,13 +1,16 @@
 'use client'
 
-import { BsPinAngleFill } from 'react-icons/bs'
+import { useState } from 'react'
 import { useReadContract } from 'wagmi'
 import { useAppKitAccount } from '@reown/appkit/react'
 import { pinAbi } from '@/abi/pin'
 
 const pinAddress = '0x0e6dd7ec79912374e4567ed76f8512a8e2343b07'
+const step = 1.05
 
 export default function Home() {
+  const [highestBid] = useState(2100000)
+
   const account = useAppKitAccount()
 
   const { data: balance } = useReadContract({
@@ -31,16 +34,26 @@ export default function Home() {
   }
 
   return (
-    <div className='max-w-2xl mx-auto'>
+    <>
       <div className='flex flex-row items-center gap-2'>
-        <BsPinAngleFill className='text-red-700 text-6xl' />
-        <h1 className='text-6xl sm:text-5xl font-bold tracking-tight'>$PIN</h1>
+        <h1 className='text-6xl sm:text-5xl font-bold tracking-tight'>
+          Auction
+        </h1>
       </div>
-      <ol className='font-mono list-inside list-decimal text-sm/6 text-center sm:text-left'>
-        <li className='mb-2 tracking-[-.01em]'>
-          Get your memes, ads or projects seen by thousands.
-        </li>
-      </ol>
+      <fieldset className='fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4'>
+        <legend className='fieldset-legend'>Current Auction</legend>
+        <p className='text-sm mb-2'>Highest Bid: {highestBid} $PIN</p>
+
+        <label className='label'>Your Bid</label>
+        <input type='number' className='input' value={highestBid * step} />
+        <p className='label'>Minimum Bid: {highestBid * step} $PIN</p>
+
+        <label className='label'>Your Link</label>
+        <input type='text' className='input' value='https://example.com' />
+        <p className='label'>(If you win the auction)</p>
+
+        <button className='btn btn-neutral mt-4'>Submit</button>
+      </fieldset>
       <div>
         {typeof balance === 'bigint' && balance > 0 && (
           <p className='text-sm mt-2'>
@@ -49,6 +62,6 @@ export default function Home() {
           </p>
         )}
       </div>
-    </div>
+    </>
   )
 }
