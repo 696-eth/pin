@@ -109,6 +109,12 @@ export default function Auction() {
     return obj
   }
 
+  function convertNumberToWei(amount: number): bigint {
+    const decimals = 18
+    const divisor = BigInt('10') ** BigInt(decimals)
+    return BigInt(amount) * divisor
+  }
+
   const [
     balanceData,
     allowanceData,
@@ -195,11 +201,14 @@ export default function Auction() {
   }
 
   function handleBid() {
-    writeBidContract({
-      ...auctionContract,
-      functionName: 'bid',
-      args: [bid, account?.address]
-    })
+    if (bid !== undefined) {
+      const bidInWei = convertBigIntToString(convertNumberToWei(bid))
+      writeBidContract({
+        ...auctionContract,
+        functionName: 'bid',
+        args: [bidInWei, account?.address]
+      })
+    }
   }
 
   useEffect(() => {
@@ -258,12 +267,12 @@ export default function Auction() {
           />
           <p className='label'>Minimum Bid: {minBid} $PIN</p>
 
-          <label className='label'>Your Link</label>
+          <label className='label'>Your Message or Link</label>
           <input
             type='text'
             className='input'
             placeholder='https://example.com'
-            value={link}
+            defaultValue={link}
             onChange={(e) => setLink(e.target.value)}
           />
           <p className='label'>(If you win the auction)</p>
@@ -272,6 +281,8 @@ export default function Auction() {
             <p>Insufficient balance. You have {balance} $PIN</p>
           ) : minBid !== undefined && minBid > allowance ? (
             <p>Insufficient allowance. You allowed {allowance} $PIN</p>
+          ) : link === '' ? (
+            <p>Please enter a message or link.</p>
           ) : (
             <button
               type='submit'
