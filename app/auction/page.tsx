@@ -206,7 +206,7 @@ export default function Auction() {
       writeBidContract({
         ...auctionContract,
         functionName: 'bid',
-        args: [bidInWei, account?.address]
+        args: [bidInWei, link]
       })
     }
   }
