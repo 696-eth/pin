@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useReadContracts, useWriteContract } from 'wagmi'
+import { useReadContracts, useWriteContract, useBlock } from 'wagmi'
 import { useAppKitAccount } from '@reown/appkit/react'
 import { pinAbi } from '@/abi/pin'
 import { auctionAbi } from '@/abi/auction'
@@ -24,6 +24,8 @@ export default function Auction() {
     isPending: bidPending,
     writeContract: writeBidContract
   } = useWriteContract()
+
+  const { data: block } = useBlock()
 
   const pinContract = {
     address: pinAddress,
@@ -141,7 +143,7 @@ export default function Auction() {
   const auctionTime =
     auctionTimeData?.status === 'success'
       ? (convertBigIntToString(auctionTimeData.result) as number)
-      : '0'
+      : 0
   const auctionTimestampStarted =
     auctionTimestampStartedData?.status === 'success'
       ? (convertBigIntToString(auctionTimestampStartedData.result) as number)
@@ -171,6 +173,18 @@ export default function Auction() {
         ? currentPrice * ((100 + parseInt(minBidIncrement.toString())) / 100)
         : currentPrice
       : undefined
+
+  const timeLeft =
+    auctionTime !== undefined &&
+    block !== undefined &&
+    auctionTimestampStarted !== undefined
+      ? Number(block.timestamp) <
+        Number(auctionTimestampStarted) + Number(auctionTime)
+        ? Number(auctionTimestampStarted) +
+          Number(auctionTime) -
+          Number(block.timestamp)
+        : 0
+      : 0
 
   const [bid, setBid] = useState(minBid)
   const [link, setLink] = useState('')
@@ -254,7 +268,7 @@ export default function Auction() {
           </a>
         </p>
       )}
-      {auctionInProgress ? (
+      {auctionInProgress && timeLeft > 0 ? (
         <fieldset className='fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4'>
           <p className='text-sm mb-2'>Current Bid: {currentPrice} $PIN</p>
 
@@ -294,10 +308,7 @@ export default function Auction() {
             </button>
           )}
           {bidPending && <p>Waiting for bid...</p>}
-          {auctionTimestampStarted !== undefined && (
-            <p>Auction has started at {auctionTimestampStarted}</p>
-          )}
-          {auctionTime !== undefined && <p>Auction time: {auctionTime}</p>}
+          {timeLeft > 0 && <p>Time Left: {timeLeft}</p>}
           {finalCooldown !== undefined && (
             <p>Final cooldown: {finalCooldown}</p>
           )}
