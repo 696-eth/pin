@@ -78,18 +78,19 @@ export default function Auction() {
     ]
   })
 
-  // function formatBalance(balance: bigint) {
-  //   if (!balance) return '0'
-  //   try {
-  //     // 18 decimals for ERC20
-  //     const decimals = 18
-  //     const divisor = BigInt('10') ** BigInt(decimals)
-  //     const whole = balance / divisor
-  //     return whole.toLocaleString()
-  //   } catch {
-  //     return balance.toString()
-  //   }
-  // }
+  function formatWeiToEth(balance: bigint) {
+    if (!balance) return '0'
+    try {
+      // 18 decimals for ERC20
+      const decimals = 18
+      const divisor = BigInt('10') ** BigInt(decimals)
+      const whole = balance / divisor
+      // return whole.toLocaleString()
+      return whole.toString()
+    } catch {
+      return balance.toString()
+    }
+  }
 
   // Recursively convert BigInt values to strings for serialization
   function convertBigIntToString(obj: unknown): unknown {
@@ -121,11 +122,11 @@ export default function Auction() {
   ] = data ?? []
   const balance =
     balanceData?.status === 'success'
-      ? (convertBigIntToString(balanceData.result) as number)
+      ? parseInt(formatWeiToEth(balanceData.result as bigint))
       : 0
   const allowance =
     allowanceData?.status === 'success'
-      ? (convertBigIntToString(allowanceData.result) as number)
+      ? parseInt(formatWeiToEth(allowanceData.result as bigint))
       : 0
   const auctionInProgress =
     auctionInProgressData?.status === 'success'
@@ -145,11 +146,11 @@ export default function Auction() {
       : undefined
   const startPrice =
     startPriceData?.status === 'success'
-      ? convertBigIntToString(startPriceData.result)
+      ? parseInt(formatWeiToEth(startPriceData.result as bigint))
       : undefined
   const currentPrice =
     currentPriceData?.status === 'success'
-      ? (convertBigIntToString(currentPriceData.result) as number)
+      ? parseInt(formatWeiToEth(currentPriceData.result as bigint))
       : undefined
   const finalCooldown =
     finalCooldownData?.status === 'success'
@@ -157,7 +158,9 @@ export default function Auction() {
       : undefined
 
   const minBid =
-    minBidIncrement && currentPrice
+    minBidIncrement !== undefined &&
+    currentPrice !== undefined &&
+    startPrice !== undefined
       ? startPrice !== currentPrice
         ? (currentPrice * (100 + minBidIncrement)) / 100
         : currentPrice
@@ -172,11 +175,12 @@ export default function Auction() {
     if (minBid !== undefined) {
       if (newBid < minBid) {
         setError(`Bid must be at least ${minBid} $PIN`)
-      } else if (newBid < balance) {
+      } else if (newBid > balance) {
         setError(`Insufficient balance. You have ${balance} $PIN`)
-      } else if (newBid < allowance) {
+      } else if (newBid > allowance) {
         setError(`Insufficient allowance. You've allowed ${allowance} $PIN`)
       } else {
+        setError('')
         setBid(newBid)
       }
     }
@@ -249,7 +253,7 @@ export default function Auction() {
           <input
             type='number'
             className='input'
-            value={bid}
+            defaultValue={bid}
             onChange={updateBid}
           />
           <p className='label'>Minimum Bid: {minBid} $PIN</p>
