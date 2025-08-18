@@ -168,7 +168,7 @@ export default function Auction() {
     currentPrice !== undefined &&
     startPrice !== undefined
       ? startPrice !== currentPrice
-        ? (currentPrice * (100 + minBidIncrement)) / 100
+        ? currentPrice * ((100 + parseInt(minBidIncrement.toString())) / 100)
         : currentPrice
       : undefined
 
