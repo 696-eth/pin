@@ -9,7 +9,7 @@ import { maxUint256 } from 'viem'
 import { BsCheckCircleFill, BsFillDashCircleFill } from 'react-icons/bs'
 
 const pinAddress = '0x0e6dd7ec79912374e4567ed76f8512a8e2343b07'
-const auctionAddress = '0xbc9ddfa732bd7aa57ff5b654c2a9496f286f3c05'
+const auctionAddress = '0x198ff24556f2c2adD89DC1Cb516eb695dFF7b98f'
 
 export default function Auction() {
   const account = useAppKitAccount()
