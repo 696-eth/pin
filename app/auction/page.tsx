@@ -7,6 +7,7 @@ import { pinAbi } from '@/abi/pin'
 import { auctionAbi } from '@/abi/auction'
 import { maxUint256 } from 'viem'
 import { BsCheckCircleFill, BsFillDashCircleFill } from 'react-icons/bs'
+import Countdown from 'react-countdown'
 
 const pinAddress = '0x0e6dd7ec79912374e4567ed76f8512a8e2343b07'
 const auctionAddress = '0x198ff24556f2c2adD89DC1Cb516eb695dFF7b98f'
@@ -160,9 +161,9 @@ export default function Auction() {
     currentPriceData?.status === 'success'
       ? parseInt(formatWeiToEth(currentPriceData.result as bigint))
       : undefined
-  const finalCooldown =
+  const finalCooldownMinutes =
     finalCooldownData?.status === 'success'
-      ? (convertBigIntToString(finalCooldownData.result) as number)
+      ? (convertBigIntToString(finalCooldownData.result) as number) / 60
       : undefined
 
   const minBid =
@@ -230,6 +231,68 @@ export default function Auction() {
       refetch()
     }
   }, [allowanceHash, bidHash, refetch])
+
+  const CountdownCompletion = () => <p>Auction has completed!</p>
+
+  const countdownRenderer = ({
+    hours,
+    minutes,
+    seconds,
+    completed
+  }: {
+    hours: number
+    minutes: number
+    seconds: number
+    completed: boolean
+  }) => {
+    if (completed) {
+      return <CountdownCompletion />
+    } else {
+      return (
+        // <p className=''>
+        //   Time Left: {hours}:{minutes}:{seconds}
+        // </p>
+        <div className='grid grid-flow-col gap-4 text-center auto-cols-max'>
+          <div className='flex flex-col p-2 bg-neutral rounded-box text-neutral-content'>
+            <span className='countdown font-mono text-5xl'>
+              <span
+                style={{ '--value': hours } as React.CSSProperties}
+                aria-live='polite'
+                aria-label={'counter'}
+              >
+                {hours}
+              </span>
+            </span>
+            hours
+          </div>
+          <div className='flex flex-col p-2 bg-neutral rounded-box text-neutral-content'>
+            <span className='countdown font-mono text-5xl'>
+              <span
+                style={{ '--value': minutes } as React.CSSProperties}
+                aria-live='polite'
+                aria-label={'counter'}
+              >
+                {minutes}
+              </span>
+            </span>
+            min
+          </div>
+          <div className='flex flex-col p-2 bg-neutral rounded-box text-neutral-content'>
+            <span className='countdown font-mono text-5xl'>
+              <span
+                style={{ '--value': seconds } as React.CSSProperties}
+                aria-live='polite'
+                aria-label={'counter'}
+              >
+                {seconds}
+              </span>
+            </span>
+            sec
+          </div>
+        </div>
+      )
+    }
+  }
 
   return (
     <>
@@ -308,10 +371,14 @@ export default function Auction() {
             </button>
           )}
           {bidPending && <p>Waiting for bid...</p>}
-          {timeLeft > 0 && <p>Time Left: {timeLeft}</p>}
-          {finalCooldown !== undefined && (
-            <p>Final cooldown: {finalCooldown}</p>
-          )}
+          <Countdown
+            date={Date.now() + timeLeft * 1000}
+            renderer={countdownRenderer}
+          />
+          <p>
+            (Bids placed in the last {finalCooldownMinutes} minutes will extend
+            the auction by {finalCooldownMinutes} minutes.)
+          </p>
         </fieldset>
       ) : (
         <>
