@@ -8,6 +8,7 @@ import { auctionAbi } from '@/abi/auction'
 import { maxUint256 } from 'viem'
 import { BsCheckCircleFill, BsFillDashCircleFill } from 'react-icons/bs'
 import Countdown from 'react-countdown'
+import LastWinner from '@/components/last-winner'
 
 const pinAddress = '0x0e6dd7ec79912374e4567ed76f8512a8e2343b07'
 const auctionAddress = '0x198ff24556f2c2adD89DC1Cb516eb695dFF7b98f'
@@ -77,6 +78,14 @@ export default function Auction() {
       {
         ...auctionContract,
         functionName: 'finalCooldown'
+      },
+      {
+        ...auctionContract,
+        functionName: 'getLastWinnerString'
+      },
+      {
+        ...auctionContract,
+        functionName: 'lastWinner'
       }
     ]
   })
@@ -127,7 +136,9 @@ export default function Auction() {
     minBidIncrementData,
     startPriceData,
     currentPriceData,
-    finalCooldownData
+    finalCooldownData,
+    winningStringData,
+    winningAddressData
   ] = data ?? []
   const balance =
     balanceData?.status === 'success'
@@ -165,6 +176,10 @@ export default function Auction() {
     finalCooldownData?.status === 'success'
       ? (convertBigIntToString(finalCooldownData.result) as number) / 60
       : undefined
+  const winningString =
+    winningStringData?.status === 'success' ? winningStringData.result : ''
+  const winningAddress =
+    winningAddressData?.status === 'success' ? winningAddressData.result : ''
 
   const minBid =
     minBidIncrement !== undefined &&
@@ -293,6 +308,12 @@ export default function Auction() {
 
   return (
     <>
+      {winningAddress && winningString && (
+        <LastWinner
+          address={winningAddress as string}
+          message={winningString as string}
+        />
+      )}
       <div className='flex flex-row items-center gap-2'>
         <h1 className='text-6xl sm:text-5xl font-bold tracking-tight'>
           Auction
@@ -329,7 +350,7 @@ export default function Auction() {
         </p>
       )}
       {auctionInProgress && timeLeft > 0 ? (
-        <fieldset className='fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4'>
+        <fieldset className='fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 my-4'>
           <p className='text-sm mb-2'>Current Bid: {currentPrice} $PIN</p>
 
           <label className='label'>Your Bid</label>
