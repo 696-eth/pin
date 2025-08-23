@@ -15,6 +15,31 @@ export const auctionAbi = [
     inputs: [
       {
         indexed: true,
+        internalType: 'uint256',
+        name: 'auctionId',
+        type: 'uint256'
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'bidder',
+        type: 'address'
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'bidAmount',
+        type: 'uint256'
+      }
+    ],
+    name: 'BidPlaced',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: 'address',
         name: 'previousOwner',
         type: 'address'

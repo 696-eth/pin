@@ -249,9 +249,6 @@ export default function Auction() {
       return <CountdownCompletion />
     } else {
       return (
-        // <p className=''>
-        //   Time Left: {hours}:{minutes}:{seconds}
-        // </p>
         <div className='grid grid-flow-col gap-4 text-center auto-cols-max'>
           <div className='flex flex-col p-2 bg-neutral rounded-box text-neutral-content'>
             <span className='countdown font-mono text-5xl'>
@@ -314,11 +311,11 @@ export default function Auction() {
           </p>
         )}
       </div>
-      {allowance == 0 && (
-        <button onClick={handleAllowance} className='btn btn-primary'>
-          Approve
-        </button>
-      )}
+      {/* {allowance == 0 && ( */}
+      <button onClick={handleAllowance} className='btn btn-primary'>
+        Update Allowance
+      </button>
+      {/* )} */}
       {allowanceIsPending && <p>Waiting for approval...</p>}
       {allowanceHash && (
         <p>
