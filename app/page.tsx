@@ -5,7 +5,7 @@ import { useReadContract } from 'wagmi'
 import { useAppKitAccount } from '@reown/appkit/react'
 import { pinAbi } from '@/abi/pin'
 
-const pinAddress = '0x0e6dd7ec79912374e4567ed76f8512a8e2343b07'
+const pinAddress = process.env.NEXT_PUBLIC_PIN_ADDRESS as `0x${string}`
 
 export default function Home() {
   const account = useAppKitAccount()

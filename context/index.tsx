@@ -2,32 +2,10 @@
 
 import React, { type ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createAppKit } from '@reown/appkit/react'
-import { base } from '@reown/appkit/networks'
-import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
-import { wagmiAdapter, projectId } from '@/config'
+import { cookieToInitialState, WagmiProvider } from 'wagmi'
+import { config } from '@/config'
 
 const queryClient = new QueryClient()
-
-if (!projectId) {
-  throw new Error('Project ID not defined.')
-}
-
-const metadata = {
-  name: '$PIN',
-  description: 'Get your memes, ads or projects seen by thousands.',
-  url: 'https://pinmytweet.xyz',
-  icons: []
-}
-
-export const modal = createAppKit({
-  adapters: [wagmiAdapter],
-  projectId,
-  networks: [base],
-  defaultNetwork: base,
-  metadata: metadata,
-  themeMode: 'dark'
-})
 
 function ContextProvider({
   children,
@@ -36,16 +14,10 @@ function ContextProvider({
   children: ReactNode
   cookies: string | null
 }) {
-  const initialState = cookieToInitialState(
-    wagmiAdapter.wagmiConfig as Config,
-    cookies
-  )
+  const initialState = cookieToInitialState(config, cookies)
 
   return (
-    <WagmiProvider
-      config={wagmiAdapter.wagmiConfig as Config}
-      initialState={initialState}
-    >
+    <WagmiProvider config={config} initialState={initialState}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   )

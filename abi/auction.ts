@@ -122,6 +122,13 @@ export const auctionAbi = [
   },
   {
     inputs: [],
+    name: 'currentString',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
     name: 'finalCooldown',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
@@ -142,16 +149,24 @@ export const auctionAbi = [
     type: 'function'
   },
   {
-    inputs: [],
-    name: 'getLastWinnerString',
-    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    inputs: [{ internalType: 'uint256', name: 'auctionId', type: 'uint256' }],
+    name: 'getDetailsById',
+    outputs: [
+      { internalType: 'address', name: '', type: 'address' },
+      { internalType: 'string', name: '', type: 'string' },
+      { internalType: 'uint256', name: '', type: 'uint256' }
+    ],
     stateMutability: 'view',
     type: 'function'
   },
   {
-    inputs: [{ internalType: 'uint256', name: 'id', type: 'uint256' }],
-    name: 'getWinnerString',
-    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    inputs: [],
+    name: 'getLastAuctionDetails',
+    outputs: [
+      { internalType: 'address', name: '', type: 'address' },
+      { internalType: 'string', name: '', type: 'string' },
+      { internalType: 'uint256', name: '', type: 'uint256' }
+    ],
     stateMutability: 'view',
     type: 'function'
   },
@@ -159,6 +174,20 @@ export const auctionAbi = [
     inputs: [],
     name: 'lastWinner',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'lastWinnerPrice',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'lastWinnerString',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function'
   },
@@ -239,16 +268,23 @@ export const auctionAbi = [
     type: 'function'
   },
   {
-    inputs: [{ internalType: 'address', name: '', type: 'address' }],
-    name: 'userStrings',
-    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'winnerAddress',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function'
   },
   {
     inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    name: 'winnerAddress',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'winnerPrices',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'winnerStrings',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function'
   },

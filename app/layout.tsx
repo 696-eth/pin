@@ -38,7 +38,7 @@ export default async function RootLayout({
         <ContextProvider cookies={cookies}>
           <div className='grid grid-rows-[auto_1fr_auto] h-screen'>
             <Header />
-            <main className='p-8 pb-20 gap-16 sm:p-20'>{children}</main>
+            <main className='px-8 pb-20 gap-16 sm:px-20'>{children}</main>
             <Footer />
           </div>
         </ContextProvider>
