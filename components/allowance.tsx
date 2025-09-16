@@ -21,7 +21,7 @@ export default function Allowance({
     balance: number
   }) => void
 }) {
-  const account = useAppKitAccount()
+  const { address, isConnected } = useAppKitAccount()
 
   const {
     data: allowanceHash,
@@ -46,13 +46,13 @@ export default function Allowance({
         address: pinAddress,
         abi: pinAbi,
         functionName: 'balanceOf',
-        args: [account?.address]
+        args: [address]
       },
       {
         address: pinAddress,
         abi: pinAbi,
         functionName: 'allowance',
-        args: [account?.address, auctionAddress]
+        args: [address, auctionAddress]
       }
     ]
   })
@@ -94,37 +94,41 @@ export default function Allowance({
 
   return (
     <>
-      <div className='max-w-sm flex flex-col items-center gap-4'>
-        <p className='text-xl font-bold'>
-          Balance: {formatNumber(balance)} $PIN
-          <br />
-          Spending Limit:{' '}
-          {allowance === unlimitedInt
-            ? 'Unlimited'
-            : formatNumber(allowance)}{' '}
-          $PIN
-        </p>
-
-        <button onClick={handleAllowance} className='btn btn-primary'>
-          Update Spending Limit
-        </button>
-        <p className='text-sm text-accent text-center'>
-          Your spending limit defaults to unlimited, but you may edit the amount
-          to your desired amount of allowance from your wallet popup.
-        </p>
-        {allowanceIsPending && <p>Waiting for approval...</p>}
-        {allowanceHash && (
-          <p>
-            <a
-              href={`https://basescan.org/tx/${allowanceHash}`}
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              View on BaseScan
-            </a>
+      {isConnected ? (
+        <div className='max-w-sm flex flex-col items-center gap-4'>
+          <p className='text-xl font-bold'>
+            Balance: {formatNumber(balance)} $PIN
+            <br />
+            Spending Limit:{' '}
+            {allowance === unlimitedInt
+              ? 'Unlimited'
+              : formatNumber(allowance)}{' '}
+            $PIN
           </p>
-        )}
-      </div>
+
+          <button onClick={handleAllowance} className='btn btn-primary'>
+            Update Spending Limit
+          </button>
+          <p className='text-sm text-accent text-center'>
+            Your spending limit defaults to unlimited, but you may edit the
+            amount to your desired amount of allowance from your wallet popup.
+          </p>
+          {allowanceIsPending && <p>Waiting for approval...</p>}
+          {allowanceHash && (
+            <p>
+              <a
+                href={`https://basescan.org/tx/${allowanceHash}`}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                View on BaseScan
+              </a>
+            </p>
+          )}
+        </div>
+      ) : (
+        <appkit-button />
+      )}
       <hr className='my-4 h-px bg-gray-500 border-0 w-md' />
     </>
   )

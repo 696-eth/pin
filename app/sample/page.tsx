@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Allowance from '@/components/allowance'
 import Auction from '@/components/auction'
 import FeaturedWinner from '@/components/featured-winner'
+// import Bids from '@/components/bids'
 
 export default function Page() {
   const [allowance, setAllowance] = useState(0)
@@ -21,10 +22,13 @@ export default function Page() {
   }
 
   return (
-    <div className='flex flex-col items-center gap-8 pb-16'>
+    <div className='flex flex-col items-center pb-16'>
       <FeaturedWinner />
       <Allowance onChange={updateAllowance} />
-      <Auction balance={balance} allowance={allowance} />
+      <div className='flex flex-row gap-8'>
+        <Auction balance={balance} allowance={allowance} />
+        {/* <Bids /> */}
+      </div>
     </div>
   )
 }

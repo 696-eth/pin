@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
-import { useReadContracts, useWriteContract, useBlock } from 'wagmi'
+import { useReadContracts, useWriteContract, useBlock, useEnsName } from 'wagmi'
 
 import CountdownTimer from './countdown-timer'
 import {
   auctionAddress,
   convertBigIntToString,
   formatWeiToEth,
-  convertNumberToWei
+  convertNumberToWei,
+  formatNumber
 } from '@/config'
 import { auctionAbi } from '@/abi/auction'
 
@@ -56,6 +57,10 @@ export default function Auction(props: { allowance: number; balance: number }) {
       },
       {
         ...auctionContract,
+        functionName: 'currentString'
+      },
+      {
+        ...auctionContract,
         functionName: 'finalCooldown'
       }
     ]
@@ -69,6 +74,7 @@ export default function Auction(props: { allowance: number; balance: number }) {
     startPriceData,
     currentPriceData,
     currentBidderData,
+    currentStringData,
     finalCooldownData
   ] = data || []
 
@@ -100,10 +106,22 @@ export default function Auction(props: { allowance: number; balance: number }) {
     currentBidderData?.status === 'success'
       ? currentBidderData.result
       : '0x0000000000000000000000000000000000000000'
+  const currentString =
+    currentStringData?.status === 'success'
+      ? (currentStringData.result as string)
+      : ''
   const finalCooldownMinutes =
     finalCooldownData?.status === 'success'
       ? (convertBigIntToString(finalCooldownData.result) as number) / 60
       : undefined
+
+  const { data: ensName } = useEnsName({
+    address: currentBidder as `0x${string}`
+  })
+  const shortenAddress = (addy: string) =>
+    `${addy.slice(0, 6)}...${addy.slice(-4)}`
+  const bidderAddress =
+    ensName || (currentBidder && shortenAddress(currentBidder as string))
 
   const minBid =
     minBidIncrement !== undefined &&
@@ -113,7 +131,7 @@ export default function Auction(props: { allowance: number; balance: number }) {
         currentBidder === '0x0000000000000000000000000000000000000000'
         ? currentPrice
         : currentPrice * ((100 + parseInt(minBidIncrement.toString())) / 100)
-      : undefined
+      : 0
 
   const timeLeft =
     auctionTime !== undefined &&
@@ -141,12 +159,16 @@ export default function Auction(props: { allowance: number; balance: number }) {
     const newBid = Number(event.target.value)
     if (minBid !== undefined) {
       if (newBid < minBid) {
-        setError(`Bid must be at least ${minBid} $PIN`)
+        setError(`Bid must be at least ${formatNumber(minBid)} $PIN`)
       } else if (newBid > props.balance) {
-        setError(`Insufficient balance. You have ${props.balance} $PIN`)
+        setError(
+          `Insufficient balance. You have ${formatNumber(props.balance)} $PIN`
+        )
       } else if (newBid > props.allowance) {
         setError(
-          `Insufficient allowance. You've allowed ${props.allowance} $PIN`
+          `Insufficient allowance. You've allowed ${formatNumber(
+            props.allowance
+          )} $PIN`
         )
       } else {
         setError('')
@@ -167,23 +189,31 @@ export default function Auction(props: { allowance: number; balance: number }) {
   }
 
   return (
-    <>
-      <div className='flex flex-row items-center gap-2'>
-        <h1 className='text-6xl sm:text-5xl font-bold tracking-tight'>
-          Auction
-        </h1>
-      </div>
+    <div className='flex flex-col items-center'>
       {!auctionInProgress || timeLeft < 1 ? (
         <>
           <h2 className='text-4xl'>No Auction In Progress</h2>
-          <p>Please check back later for new auctions.</p>
+          <p>Please check back soon for the next auction.</p>
         </>
       ) : (
         <>
+          <div className='flex flex-row items-center gap-2'>
+            <h1 className='text-6xl sm:text-5xl font-bold tracking-tight'>
+              Current Auction
+            </h1>
+          </div>
           {error && <p className='text-red-500'>{error}</p>}
+          {currentBidder !== '0x0000000000000000000000000000000000000000' &&
+            currentPrice && (
+              <>
+                <p className='text-xl text-accent'>
+                  Highest Bid: {formatNumber(currentPrice)} $PIN
+                </p>
+                <p>{currentString}</p>
+                <p>Bidder: {bidderAddress as string}</p>
+              </>
+            )}
           <fieldset className='fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 my-4'>
-            <p className='text-sm mb-2'>Current Bid: {currentPrice} $PIN</p>
-
             <label className='label'>Your Bid</label>
             <input
               type='number'
@@ -191,7 +221,7 @@ export default function Auction(props: { allowance: number; balance: number }) {
               defaultValue={bid}
               onChange={updateBid}
             />
-            <p className='label'>Minimum Bid: {minBid} $PIN</p>
+            <p className='label'>Minimum Bid: {formatNumber(minBid)} $PIN</p>
 
             <label className='label'>Your Message or Link</label>
             <input
@@ -204,9 +234,15 @@ export default function Auction(props: { allowance: number; balance: number }) {
             <p className='label'>(If you win the auction)</p>
 
             {minBid !== undefined && minBid > props.balance ? (
-              <p>Insufficient balance. You have {props.balance} $PIN</p>
+              <p>
+                Insufficient balance. You have {formatNumber(props.balance)}{' '}
+                $PIN
+              </p>
             ) : minBid !== undefined && minBid > props.allowance ? (
-              <p>Insufficient allowance. You allowed {props.allowance} $PIN</p>
+              <p>
+                Insufficient allowance. You allowed{' '}
+                {formatNumber(props.allowance)} $PIN
+              </p>
             ) : link === '' ? (
               <p>Please enter a message or link.</p>
             ) : (
@@ -228,6 +264,6 @@ export default function Auction(props: { allowance: number; balance: number }) {
           </fieldset>
         </>
       )}
-    </>
+    </div>
   )
 }

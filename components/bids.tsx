@@ -1,13 +1,43 @@
-// import { createPublicClient, http, parseEventLogs, type AbiEvent } from 'viem'
-// import { base } from 'viem/chains'
-// import { useWatchContractEvent } from 'wagmi'
+// import { useEffect } from 'react'
+// import { useWatchContractEvent, useReadContract } from 'wagmi'
+// import { Alchemy, Network, Utils } from 'alchemy-sdk'
 // import { auctionAbi } from '@/abi/auction'
+// import { alchemyId, auctionAddress, convertBigIntToString } from '@/config'
 
-// const auctionAddress = process.env.NEXT_PUBLIC_AUCTION_ADDRESS
-// const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY
-// const alchemyUrl = `https://base-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
+// const alchemyUrl = `https://base-mainnet.g.alchemy.com/v2/${alchemyId}`
+// const alchemy = new Alchemy({
+//   apiKey: alchemyId,
+//   network: Network.BASE_MAINNET,
+//   url: alchemyUrl
+// })
+// const bidEventSignature = Utils.id('BidPlaced(uint256,address,uint256)')
 
 export default function Bids() {
+  // const { data: auctionIdData } = useReadContract({
+  //   address: auctionAddress,
+  //   abi: auctionAbi,
+  //   functionName: 'auctionID'
+  // })
+  // const auctionId = convertBigIntToString(auctionIdData) as number
+  // console.log('Auction ID:', auctionId)
+
+  // useEffect(() => {
+  //   async function getLogs() {
+  //     try {
+  //       const logs = await alchemy.core.getLogs({
+  //         address: auctionAddress as `0x${string}`,
+  //         fromBlock: 35261552,
+  //         toBlock: 'latest',
+  //         topics: [bidEventSignature]
+  //       })
+  //       console.log('Logs:', logs)
+  //     } catch (error) {
+  //       console.error('Error fetching logs:', error)
+  //     }
+  //   }
+  //   getLogs()
+  // }, [])
+
   // try {
   //   const client = createPublicClient({
   //     chain: base,

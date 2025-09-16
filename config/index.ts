@@ -8,6 +8,7 @@ export const websiteURL = process.env.NEXT_PUBLIC_WEBSITE_URL
 export const pinAddress = process.env.NEXT_PUBLIC_PIN_ADDRESS as `0x${string}`
 export const auctionAddress = process.env
   .NEXT_PUBLIC_AUCTION_ADDRESS as `0x${string}`
+export const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 
 if (!projectId || !websiteURL) {
   throw new Error('Project ID or Website URL not defined.')
@@ -15,6 +16,10 @@ if (!projectId || !websiteURL) {
 
 if (!pinAddress || !auctionAddress) {
   throw new Error('$Pin or Auction address not defined.')
+}
+
+if (!alchemyId) {
+  throw new Error('$Alchemy ID not defined.')
 }
 
 export const networks = [base]
@@ -43,7 +48,10 @@ export const modal = createAppKit({
   networks: [base],
   defaultNetwork: base,
   metadata: metadata,
-  themeMode: 'dark'
+  themeMode: 'dark',
+  features: {
+    analytics: false
+  }
 })
 
 export function convertBigIntToString(obj: unknown): unknown {
