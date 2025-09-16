@@ -19,7 +19,7 @@ if (!pinAddress || !auctionAddress) {
 }
 
 if (!alchemyId) {
-  throw new Error('$Alchemy ID not defined.')
+  throw new Error('$Alchemy ID is not defined.')
 }
 
 export const networks = [base]
